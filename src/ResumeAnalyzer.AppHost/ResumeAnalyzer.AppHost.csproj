@@ -1,0 +1,9 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.2.2">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <UserSecretsId>400cee8b-4cb9-4bc2-a865-1202659fc839</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ResumeAnalyzer.Api\ResumeAnalyzer.Api.csproj" />
+  </ItemGroup>
+</Project>

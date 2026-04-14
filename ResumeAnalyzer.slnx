@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ResumeAnalyzer.Api/ResumeAnalyzer.Api.csproj" />
+    <Project Path="src/ResumeAnalyzer.AppHost/ResumeAnalyzer.AppHost.csproj" Id="7ce94cb3-3ea0-4819-bd5b-e84cc3b704fd" />
+    <Project Path="src/ResumeAnalyzer.ServiceDefaults/ResumeAnalyzer.ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/src/Core/">
+    <Project Path="src/Core/ResumeAnalyzer.Application/ResumeAnalyzer.Application.csproj" />
+    <Project Path="src/Core/ResumeAnalyzer.Domain/ResumeAnalyzer.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="src/Infrastructure/ResumeAnalyzer.Infrastructure/ResumeAnalyzer.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/ArchitectureTests/">
+    <Project Path="tests/ArchitectureTests/ResumeAnalyzer.ArchitectureTests/ResumeAnalyzer.ArchitectureTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/IntegrationTests/">
+    <Project Path="tests/IntegrationTests/ResumeAnalyzer.Api.IntegrationTests/ResumeAnalyzer.Api.IntegrationTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/UnitTests/">
+    <Project Path="tests/UnitTests/ResumeAnalyzer.Application.UnitTests/ResumeAnalyzer.Application.UnitTests.csproj" />
+    <Project Path="tests/UnitTests/ResumeAnalyzer.Infrastructure.UnitTests/ResumeAnalyzer.Infrastructure.UnitTests.csproj" />
+  </Folder>
+</Solution>

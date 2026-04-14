@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Core\ResumeAnalyzer.Application\ResumeAnalyzer.Application.csproj" />
+  </ItemGroup>
+</Project>

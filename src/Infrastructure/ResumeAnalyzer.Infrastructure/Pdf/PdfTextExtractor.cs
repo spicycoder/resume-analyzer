@@ -1,6 +1,6 @@
 using System.Text;
+using ResumeAnalyzer.Application.UseCases.Queries;
 using ResumeAnalyzer.Application.Abstractions;
-using ResumeAnalyzer.Domain.Exceptions;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Core;
 using UglyToad.PdfPig.Exceptions;
@@ -14,9 +14,6 @@ public class PdfTextExtractor : IPdfTextExtractor
         try
         {
             using var document = PdfDocument.Open(pdfStream);
-            
-            // Note: PdfDocument.Open might succeed for some restricted PDFs 
-            // but we check if we can actually read it
             StringBuilder textBuilder = new();
             
             foreach (var page in document.GetPages())

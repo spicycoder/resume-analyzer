@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ResumeAnalyzer.Application.UseCases.Queries;
-using ResumeAnalyzer.Domain.Exceptions;
+using ResumeAnalyzer.Domain.Models;
 using Wolverine;
 
 namespace ResumeAnalyzer.Api.Controllers;
@@ -11,23 +11,26 @@ public sealed class AnalyzeController(IMessageBus bus) : ControllerBase
 {
     private const int MaxRequestSize = 11 * 1024 * 1024; // 11MB for request headroom
 
-    [HttpPost("read-pdf")]
+    [HttpPost]
     [Consumes("multipart/form-data")]
     [RequestSizeLimit(MaxRequestSize)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AnalysisResult))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
     [ProducesResponseType(StatusCodes.Status413PayloadTooLarge)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    public async Task<IActionResult> ReadPdf(IFormFile file, CancellationToken cancellationToken)
+    public async Task<IActionResult> Analyze(IFormFile jd, IFormFile resume, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(file);
+        ArgumentNullException.ThrowIfNull(jd);
+        ArgumentNullException.ThrowIfNull(resume);
 
         try
         {
-            var query = new ReadPdfQuery(file.OpenReadStream(), file.FileName, file.Length);
+            var query = new AnalyzeResumeQuery(
+                jd.OpenReadStream(), jd.FileName, jd.Length,
+                resume.OpenReadStream(), resume.FileName, resume.Length);
             
-            var result = await bus.InvokeAsync<string>(query, cancellationToken).ConfigureAwait(false);
+            var result = await bus.InvokeAsync<AnalysisResult>(query, cancellationToken).ConfigureAwait(false);
             
             return Ok(result);
         }

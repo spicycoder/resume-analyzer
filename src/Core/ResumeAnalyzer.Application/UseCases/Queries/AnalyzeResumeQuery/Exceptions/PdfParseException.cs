@@ -1,4 +1,4 @@
-namespace ResumeAnalyzer.Domain.Exceptions;
+namespace ResumeAnalyzer.Application.UseCases.Queries;
 
 public class PdfParseException : Exception
 {

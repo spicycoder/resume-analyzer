@@ -1,5 +1,4 @@
 using AspNetCore.Swagger.Themes;
-
 using ResumeAnalyzer.Application;
 using ResumeAnalyzer.Infrastructure;
 
@@ -8,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 builder.Host.UseApplication();
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();

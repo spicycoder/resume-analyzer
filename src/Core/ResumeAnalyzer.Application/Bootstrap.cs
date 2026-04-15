@@ -14,6 +14,13 @@ public static class ApplicationBootstrap
         host.ConfigureServices(services =>
         {
             services.AddValidatorsFromAssembly(typeof(ApplicationBootstrap).Assembly);
+
+            var promptPath = Path.Combine(AppContext.BaseDirectory, "Prompts", "system-prompt.md");
+            var systemPrompt = File.Exists(promptPath)
+                ? File.ReadAllText(promptPath)
+                : "You are an expert hiring analyst.";
+
+            services.AddSingleton(new SystemPrompt(systemPrompt));
         });
 
         // 2. Configure Wolverine

@@ -5,8 +5,14 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Microsoft.Extensions.AI.Abstractions" />
     <PackageReference Include="WolverineFx" />
     <PackageReference Include="WolverineFx.FluentValidation" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Prompts\system-prompt.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <PropertyGroup>
   </PropertyGroup>

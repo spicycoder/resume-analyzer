@@ -9,7 +9,7 @@
     <PackageVersion Include="coverlet.collector" Version="10.0.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.AI" Version="10.4.1" />
+    <PackageVersion Include="Microsoft.Extensions.AI" Version="10.5.0" />
     <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="10.5.0" />
     <PackageVersion Include="Microsoft.Extensions.AI.OpenAI" Version="10.5.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.7" />
@@ -24,8 +24,8 @@
     <PackageVersion Include="PdfPig" Version="0.1.14" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.1.7" />
     <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.7" />
-    <PackageVersion Include="WolverineFx" Version="5.32.0" />
-    <PackageVersion Include="WolverineFx.FluentValidation" Version="5.32.0" />
+    <PackageVersion Include="WolverineFx" Version="5.32.1" />
+    <PackageVersion Include="WolverineFx.FluentValidation" Version="5.32.1" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>

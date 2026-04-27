@@ -6,10 +6,9 @@ public class AnalyzeResumeQueryValidator : AbstractValidator<AnalyzeResumeQuery>
 {
     public AnalyzeResumeQueryValidator()
     {
-        // JD Validation
         RuleFor(x => x.JdStream)
             .NotNull()
-            .Must(x => x.Length > 0).WithMessage("JD stream cannot be empty.");
+            .Must(x => x != null && x.Length > 0).WithMessage("JD stream cannot be empty.");
 
         RuleFor(x => x.JdFileName)
             .NotEmpty()
@@ -20,10 +19,9 @@ public class AnalyzeResumeQueryValidator : AbstractValidator<AnalyzeResumeQuery>
             .InclusiveBetween(1, 10 * 1024 * 1024)
             .WithMessage("JD file size must be between 1 byte and 10MB.");
 
-        // Resume Validation
         RuleFor(x => x.ResumeStream)
             .NotNull()
-            .Must(x => x.Length > 0).WithMessage("Resume stream cannot be empty.");
+            .Must(x => x != null && x.Length > 0).WithMessage("Resume stream cannot be empty.");
 
         RuleFor(x => x.ResumeFileName)
             .NotEmpty()

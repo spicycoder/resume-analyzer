@@ -15,11 +15,12 @@
   <Folder Name="/tests/ArchitectureTests/">
     <Project Path="tests/ArchitectureTests/ResumeAnalyzer.ArchitectureTests/ResumeAnalyzer.ArchitectureTests.csproj" />
   </Folder>
-  <Folder Name="/tests/IntegrationTests/">
-    <Project Path="tests/IntegrationTests/ResumeAnalyzer.Api.IntegrationTests/ResumeAnalyzer.Api.IntegrationTests.csproj" />
-  </Folder>
   <Folder Name="/tests/UnitTests/">
+    <Project Path="tests/UnitTests/ResumeAnalyzer.Api.UnitTests/ResumeAnalyzer.Api.UnitTests.csproj" />
     <Project Path="tests/UnitTests/ResumeAnalyzer.Application.UnitTests/ResumeAnalyzer.Application.UnitTests.csproj" />
     <Project Path="tests/UnitTests/ResumeAnalyzer.Infrastructure.UnitTests/ResumeAnalyzer.Infrastructure.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/IntegrationTests/">
+    <Project Path="tests/IntegrationTests/ResumeAnalyzer.Api.IntegrationTests/ResumeAnalyzer.Api.IntegrationTests.csproj" />
   </Folder>
 </Solution>

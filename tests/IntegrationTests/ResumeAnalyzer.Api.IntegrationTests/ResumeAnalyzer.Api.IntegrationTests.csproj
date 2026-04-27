@@ -1,5 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsIntegrationTest>true</IsIntegrationTest>
+    <NoWarn>$(NoWarn);CA1062;CA2234;CA2000</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\ResumeAnalyzer.Api\ResumeAnalyzer.Api.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.Testing" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="WireMock.Net" />
   </ItemGroup>
 </Project>

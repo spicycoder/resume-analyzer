@@ -1,5 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Infrastructure\ResumeAnalyzer.Infrastructure\ResumeAnalyzer.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\src\Core\ResumeAnalyzer.Application\ResumeAnalyzer.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\Core\ResumeAnalyzer.Domain\ResumeAnalyzer.Domain.csproj" />
   </ItemGroup>
 </Project>

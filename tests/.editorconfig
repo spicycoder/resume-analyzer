@@ -1,0 +1,6 @@
+root = false
+
+[*.cs]
+# Disable CA1707 for test method names (underscores are convention for Given_When_Then)
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1307.severity = none

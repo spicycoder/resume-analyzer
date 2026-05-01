@@ -11,9 +11,14 @@ public class AnalyzeResumeQueryHandler(
     {
         ArgumentNullException.ThrowIfNull(query);
 
-        var jdText = pdfTextExtractor.ExtractText(query.JdStream);
-        var resumeText = pdfTextExtractor.ExtractText(query.ResumeStream);
+        var jdTask = Task.Run(() => pdfTextExtractor.ExtractText(query.JdStream), cancellationToken);
+        var resumeTask = Task.Run(() => pdfTextExtractor.ExtractText(query.ResumeStream), cancellationToken);
 
-        return await resumeAnalyzer.AnalyzeAsync(resumeText, jdText, cancellationToken).ConfigureAwait(false);
+        await Task.WhenAll(jdTask, resumeTask).ConfigureAwait(false);
+
+        return await resumeAnalyzer.AnalyzeAsync(
+            await resumeTask.ConfigureAwait(false), 
+            await jdTask.ConfigureAwait(false), 
+            cancellationToken).ConfigureAwait(false);
     }
 }

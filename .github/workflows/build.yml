@@ -25,4 +25,25 @@ jobs:
       run: dotnet build --no-restore --configuration Release
 
     - name: Test
-      run: dotnet test --no-build --configuration Release --verbosity normal
+      run: dotnet test --no-build --configuration Release --collect:"XPlat Code Coverage" --settings coverage.runsettings --verbosity normal
+
+    - name: Generate Coverage Summary
+      run: |
+        dotnet tool restore
+        dotnet reportgenerator "-reports:tests/**/TestResults/*/coverage.cobertura.xml" "-targetdir:tests/coverage" "-reporttypes:TextSummary" "-classfilters:-Microsoft.*;-System.*;-Wolverine.Generated.*" "-filefilters:-*.g.cs;-*.generated.cs"
+
+    - name: Update README Coverage Badge
+      run: |
+        COVERAGE=$(grep "Line coverage:" tests/coverage/Summary.txt | grep -oE "[0-9.]+")
+        echo "Coverage is $COVERAGE%"
+        sed -i "s|coverage-[0-9.]*%25|coverage-$COVERAGE%25|g" README.md
+
+    - name: Commit and Push README changes
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add README.md
+        git commit -m "docs: update coverage badge [skip ci]" || echo "No changes to commit"
+        git push
+

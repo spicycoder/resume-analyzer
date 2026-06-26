@@ -54,7 +54,8 @@ export default function HomePage() {
     const timeout = setTimeout(() => ac.abort(), 120_000)
 
     try {
-      const res = await fetch("/api/analyze", {
+      const apiUrl = import.meta.env.VITE_API_URL || ""
+      const res = await fetch(`${apiUrl}/api/analyze`, {
         method: "POST",
         body: form,
         signal: ac.signal,

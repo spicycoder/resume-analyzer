@@ -177,7 +177,8 @@ export default function HomePage() {
       />
 
       <div className="relative z-10 flex flex-col items-center justify-between h-dvh py-4 sm:py-8 px-3 sm:px-6 lg:px-8">
-        <header className="pt-4 sm:pt-8">
+        <header className="pt-4 sm:pt-8 flex items-center gap-3">
+          <Sparkles className="size-6 sm:size-8 lg:size-10 text-white/80" />
           <ShinyText
             text="Resume Analyzer"
             speed={3}

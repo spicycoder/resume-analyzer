@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <IsIntegrationTest>true</IsIntegrationTest>
-    <NoWarn>$(NoWarn);CA1062;CA2234;CA2000</NoWarn>
+    <NoWarn>$(NoWarn);CA1062;CA2234;CA2000;NU1608</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\ResumeAnalyzer.Api\ResumeAnalyzer.Api.csproj" />

@@ -9,12 +9,6 @@
     <PackageReference Include="WolverineFx" />
     <PackageReference Include="WolverineFx.FluentValidation" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="Prompts\system-prompt.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </None>
-  </ItemGroup>
   <PropertyGroup>
   </PropertyGroup>
 </Project>

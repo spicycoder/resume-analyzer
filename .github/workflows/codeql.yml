@@ -1,0 +1,56 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1'
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: csharp
+            build-mode: autobuild
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - if: matrix.build-mode == 'autobuild'
+        name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - if: matrix.build-mode == 'autobuild'
+        run: dotnet workload install aspire
+
+      - if: matrix.build-mode == 'autobuild'
+        run: dotnet tool restore
+
+      - if: matrix.build-mode == 'autobuild'
+        run: dotnet restore ResumeAnalyzer.slnx
+
+      - if: matrix.build-mode == 'autobuild'
+        name: Build .NET
+        run: dotnet build --no-restore -c Release ResumeAnalyzer.slnx
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{ matrix.language }}"

@@ -1,8 +1,8 @@
 # Resume Analyzer
 
-| Build | Coverage |
-| --- | --- |
-| [![CI Build](https://github.com/spicycoder/resume-analyzer/actions/workflows/build.yml/badge.svg)](https://github.com/spicycoder/resume-analyzer/actions/workflows/build.yml) | [![Coverage](https://img.shields.io/badge/coverage-94.9%25-brightgreen)](https://github.com/spicycoder/resume-analyzer) |
+| Build | Coverage | Unit Tests | Integration Tests |
+| --- | --- | --- | --- |
+| [![CI](https://github.com/spicycoder/resume-analyzer/actions/workflows/build.yml/badge.svg)](https://github.com/spicycoder/resume-analyzer/actions/workflows/build.yml) | [![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/spicycoder/66489e99c3b00af77142df8d681d62b3/raw/coverage.json)](https://github.com/spicycoder/resume-analyzer/actions) | ![Unit](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/spicycoder/66489e99c3b00af77142df8d681d62b3/raw/unit.json) | ![Integration](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/spicycoder/66489e99c3b00af77142df8d681d62b3/raw/integration.json) |
 
 ---
 
@@ -74,3 +74,5 @@ sequenceDiagram
 | **ResumeAnalyzer.Infrastructure** | Concrete implementations for external services (PDF processing, OpenAI integration). |
 | **ResumeAnalyzer.Domain** | Shared models and domain entities. |
 | **ResumeAnalyzer.AppHost** | .NET Aspire orchestration. |
+| **ResumeAnalyzer.ArchitectureTests** | Architecture enforcement (layer rules, dependency validation). |
+| **ResumeAnalyzer.Api.IntegrationTests** | Full HTTP pipeline via Aspire. |

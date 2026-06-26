@@ -13,12 +13,18 @@ jobs:
       contents: write
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v4
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '10.0.x'
+
+    - name: Install Aspire workload
+      run: dotnet workload install aspire
+
+    - name: Restore tools
+      run: dotnet tool restore
 
     - name: Restore dependencies
       run: dotnet restore
@@ -31,21 +37,34 @@ jobs:
 
     - name: Generate Coverage Summary
       run: |
-        dotnet tool restore
         dotnet reportgenerator "-reports:tests/**/TestResults/*/coverage.cobertura.xml" "-targetdir:tests/coverage" "-reporttypes:TextSummary" "-classfilters:-Microsoft.*;-System.*;-Wolverine.Generated.*" "-filefilters:-*.g.cs;-*.generated.cs"
 
-    - name: Update README Coverage Badge
+    - name: Extract coverage and test counts
+      id: metrics
       run: |
-        COVERAGE=$(grep "Line coverage:" tests/coverage/Summary.txt | grep -oE "[0-9.]+")
-        echo "Coverage is $COVERAGE%"
-        sed -i "s|coverage-[0-9.]*%25|coverage-$COVERAGE%25|g" README.md
+        COVERAGE=$(grep "Line coverage:" tests/coverage/Summary.txt | grep -oE "[0-9.]+" | head -1)
+        echo "coverage=$COVERAGE" >> "$GITHUB_OUTPUT"
 
-    - name: Commit and Push README changes
+        UNIT=$(find tests/UnitTests -name '*.cs' ! -path '*/obj/*' | xargs grep -ch '\[Fact\]\|\[Theory\]' 2>/dev/null | paste -sd+ | bc)
+        INT=$(find tests/IntegrationTests -name '*.cs' ! -path '*/obj/*' | xargs grep -ch '\[Fact\]\|\[Theory\]' 2>/dev/null | paste -sd+ | bc)
+        ARCH=$(find tests/ArchitectureTests -name '*.cs' ! -path '*/obj/*' | xargs grep -ch '\[Fact\]\|\[Theory\]' 2>/dev/null | paste -sd+ | bc)
+        : ${UNIT:=0} ${INT:=0} ${ARCH:=0}
+        echo "unit=$UNIT" >> "$GITHUB_OUTPUT"
+        echo "integration=$INT" >> "$GITHUB_OUTPUT"
+
+    - name: Update Gist badges
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      env:
+        GH_TOKEN: ${{ secrets.GIST_TOKEN }}
+        COVERAGE: ${{ steps.metrics.outputs.coverage }}
+        UNIT: ${{ steps.metrics.outputs.unit }}
+        INT: ${{ steps.metrics.outputs.integration }}
       run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add README.md
-        git commit -m "docs: update coverage badge [skip ci]" || echo "No changes to commit"
-        git push
+        echo "{\"schemaVersion\":1,\"label\":\"Coverage\",\"message\":\"${COVERAGE}%\",\"color\":\"blue\"}" > /tmp/coverage.json
+        echo "{\"schemaVersion\":1,\"label\":\"Unit Tests\",\"message\":\"${UNIT}\",\"color\":\"blueviolet\"}" > /tmp/unit.json
+        echo "{\"schemaVersion\":1,\"label\":\"Int Tests\",\"message\":\"${INT}\",\"color\":\"orange\"}" > /tmp/integration.json
 
+        gh api -X PATCH /gists/66489e99c3b00af77142df8d681d62b3 \
+          -f "files[coverage.json][content]=$(cat /tmp/coverage.json)" \
+          -f "files[unit.json][content]=$(cat /tmp/unit.json)" \
+          -f "files[integration.json][content]=$(cat /tmp/integration.json)"

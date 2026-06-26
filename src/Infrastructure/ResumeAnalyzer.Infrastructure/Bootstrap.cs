@@ -1,8 +1,11 @@
-using Microsoft.Extensions.AI;
 using System.ClientModel;
+
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using OpenAI;
+
 using ResumeAnalyzer.Application.Abstractions;
 using ResumeAnalyzer.Infrastructure.Ai;
 using ResumeAnalyzer.Infrastructure.Pdf;

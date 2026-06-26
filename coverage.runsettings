@@ -1,13 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <RunSettings>
   <DataCollectionRunSettings>
     <DataCollectors>
-      <DataCollector friendlyName="XPlat code coverage">
+      <DataCollector friendlyName="Code Coverage" uri="datacollector://Microsoft/CodeCoverage/2.0">
         <Configuration>
-          <Format>cobertura</Format>
-          <Exclude>[ResumeAnalyzer.ServiceDefaults]*</Exclude>
-          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
-          <ExcludeByFile>**/*.g.cs,**/*.generated.cs,**/obj/**/*.cs</ExcludeByFile>
+          <CodeCoverage>
+            <CollectFromChildProcesses>True</CollectFromChildProcesses>
+            <ModulePaths>
+              <Include>
+                <ModulePath>.*[\\/]ResumeAnalyzer\.[^.\\\/]+\.dll$</ModulePath>
+              </Include>
+            </ModulePaths>
+          </CodeCoverage>
         </Configuration>
       </DataCollector>
     </DataCollectors>

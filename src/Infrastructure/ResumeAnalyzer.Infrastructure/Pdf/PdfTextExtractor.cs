@@ -1,6 +1,8 @@
 using System.Text;
-using ResumeAnalyzer.Application.UseCases.Queries;
+
 using ResumeAnalyzer.Application.Abstractions;
+using ResumeAnalyzer.Application.UseCases.Queries;
+
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Core;
 using UglyToad.PdfPig.Exceptions;
@@ -15,7 +17,7 @@ public class PdfTextExtractor : IPdfTextExtractor
         {
             using var document = PdfDocument.Open(pdfStream);
             StringBuilder textBuilder = new();
-            
+
             foreach (var page in document.GetPages())
             {
                 textBuilder.AppendLine(page.Text);

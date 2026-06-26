@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+
 using ResumeAnalyzer.Application.UseCases.Queries;
 using ResumeAnalyzer.Domain.Models;
+
 using Wolverine;
 
 namespace ResumeAnalyzer.Api.Controllers;
@@ -29,9 +31,9 @@ public sealed class AnalyzeController(IMessageBus bus) : ControllerBase
             var query = new AnalyzeResumeQuery(
                 jd.OpenReadStream(), jd.FileName, jd.Length,
                 resume.OpenReadStream(), resume.FileName, resume.Length);
-            
+
             var result = await bus.InvokeAsync<AnalysisResult>(query, cancellationToken).ConfigureAwait(false);
-            
+
             return Ok(result);
         }
         catch (FluentValidation.ValidationException ex)

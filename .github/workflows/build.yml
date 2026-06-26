@@ -32,23 +32,33 @@ jobs:
     - name: Build
       run: dotnet build --no-restore --configuration Release
 
-    - name: Test
-      run: dotnet test --no-build --configuration Release --collect:"XPlat Code Coverage" --settings coverage.runsettings --verbosity normal
-
-    - name: Generate Coverage Summary
+    - name: Test with coverage
       run: |
-        dotnet reportgenerator "-reports:tests/**/TestResults/*/coverage.cobertura.xml" "-targetdir:tests/coverage" "-reporttypes:TextSummary" "-classfilters:-Microsoft.*;-System.*;-Wolverine.Generated.*" "-filefilters:-*.g.cs;-*.generated.cs"
+        dotnet dotnet-coverage collect \
+          --settings ./coverage.runsettings \
+          --output ./.coverage/coverage.cobertura.xml \
+          --output-format cobertura \
+          "dotnet test --no-build -c Release --verbosity normal"
+
+    - name: Generate coverage report
+      run: |
+        dotnet reportgenerator \
+          "-reports:./.coverage/coverage.cobertura.xml" \
+          "-targetdir:./.coverage" \
+          -reporttypes:"Html_Dark;Badges" \
+          "-classfilters:-Microsoft.*;-System.*;-Wolverine.Generated.*" \
+          "-filefilters:-*.g.cs;-*.generated.cs"
 
     - name: Extract coverage and test counts
       id: metrics
       run: |
-        COVERAGE=$(grep "Line coverage:" tests/coverage/Summary.txt | grep -oE "[0-9.]+" | head -1)
-        echo "coverage=$COVERAGE" >> "$GITHUB_OUTPUT"
+        RATE=$(head -5 ./.coverage/coverage.cobertura.xml | grep -oP 'line-rate="\K[^"]+' | head -1)
+        PCT=$(echo "$RATE * 100" | bc | sed 's/\..*//')
+        echo "coverage=$PCT" >> "$GITHUB_OUTPUT"
 
         UNIT=$(find tests/UnitTests -name '*.cs' ! -path '*/obj/*' | xargs grep -ch '\[Fact\]\|\[Theory\]' 2>/dev/null | paste -sd+ | bc)
         INT=$(find tests/IntegrationTests -name '*.cs' ! -path '*/obj/*' | xargs grep -ch '\[Fact\]\|\[Theory\]' 2>/dev/null | paste -sd+ | bc)
-        ARCH=$(find tests/ArchitectureTests -name '*.cs' ! -path '*/obj/*' | xargs grep -ch '\[Fact\]\|\[Theory\]' 2>/dev/null | paste -sd+ | bc)
-        : ${UNIT:=0} ${INT:=0} ${ARCH:=0}
+        : ${UNIT:=0} ${INT:=0}
         echo "unit=$UNIT" >> "$GITHUB_OUTPUT"
         echo "integration=$INT" >> "$GITHUB_OUTPUT"
 

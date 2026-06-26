@@ -1,4 +1,5 @@
 using AspNetCore.Swagger.Themes;
+
 using ResumeAnalyzer.Application;
 using ResumeAnalyzer.Infrastructure;
 

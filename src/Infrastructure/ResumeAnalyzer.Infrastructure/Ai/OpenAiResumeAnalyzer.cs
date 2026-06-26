@@ -1,5 +1,7 @@
 using System.Text.Json;
+
 using Microsoft.Extensions.AI;
+
 using ResumeAnalyzer.Application;
 using ResumeAnalyzer.Application.Abstractions;
 using ResumeAnalyzer.Domain.Models;
@@ -36,13 +38,13 @@ public class OpenAiResumeAnalyzer(
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
         var rawJson = response.Text.Trim();
-        
+
         // Basic cleanup in case the AI wraps it in markdown code blocks
         if (rawJson.StartsWith("```json", StringComparison.Ordinal)) rawJson = rawJson[7..];
         if (rawJson.StartsWith("```", StringComparison.Ordinal)) rawJson = rawJson[3..];
         if (rawJson.EndsWith("```", StringComparison.Ordinal)) rawJson = rawJson[..^3];
-        
-        return JsonSerializer.Deserialize<AnalysisResult>(rawJson, JsonOptions) 
+
+        return JsonSerializer.Deserialize<AnalysisResult>(rawJson, JsonOptions)
                ?? throw new InvalidOperationException("Failed to deserialize AI response.");
     }
 }

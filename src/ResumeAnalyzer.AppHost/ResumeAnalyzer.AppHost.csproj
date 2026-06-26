@@ -4,6 +4,9 @@
     <UserSecretsId>400cee8b-4cb9-4bc2-a865-1202659fc839</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.JavaScript" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\ResumeAnalyzer.Api\ResumeAnalyzer.Api.csproj" />
   </ItemGroup>
 </Project>

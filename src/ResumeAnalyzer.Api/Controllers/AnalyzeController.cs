@@ -21,6 +21,7 @@ public sealed class AnalyzeController(IMessageBus bus) : ControllerBase
     [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType)]
     [ProducesResponseType(StatusCodes.Status413PayloadTooLarge)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
     public async Task<IActionResult> Analyze(IFormFile jd, IFormFile resume, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(jd);
@@ -28,9 +29,12 @@ public sealed class AnalyzeController(IMessageBus bus) : ControllerBase
 
         try
         {
+            using var jdStream = jd.OpenReadStream();
+            using var resumeStream = resume.OpenReadStream();
+
             var query = new AnalyzeResumeQuery(
-                jd.OpenReadStream(), jd.FileName, jd.Length,
-                resume.OpenReadStream(), resume.FileName, resume.Length);
+                jdStream, jd.FileName, jd.Length,
+                resumeStream, resume.FileName, resume.Length);
 
             var result = await bus.InvokeAsync<AnalysisResult>(query, cancellationToken).ConfigureAwait(false);
 
@@ -48,9 +52,23 @@ public sealed class AnalyzeController(IMessageBus bus) : ControllerBase
         {
             return UnprocessableEntity(ex.Message);
         }
+        catch (RateLimitExceededException ex)
+        {
+            return StatusCode(StatusCodes.Status429TooManyRequests, ex.Message);
+        }
+        catch (TimeoutException ex)
+        {
+            return StatusCode(StatusCodes.Status504GatewayTimeout, ex.Message);
+        }
         catch (OperationCanceledException)
         {
             return StatusCode(StatusCodes.Status499ClientClosedRequest);
         }
+#pragma warning disable CA1031
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, $"An unexpected error occurred: {ex.Message}");
+        }
+#pragma warning restore CA1031
     }
 }

@@ -12,6 +12,7 @@
   <ItemGroup>
     <None Update="Prompts\system-prompt.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
   </ItemGroup>
   <PropertyGroup>

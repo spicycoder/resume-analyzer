@@ -13,7 +13,7 @@ public static class ApplicationBootstrap
         // 1. Register Application Services (Validators, etc.)
         host.ConfigureServices(services =>
         {
-            services.AddValidatorsFromAssembly(typeof(ApplicationBootstrap).Assembly);
+            services.AddValidatorsFromAssembly(typeof(ApplicationBootstrap).Assembly, ServiceLifetime.Transient);
 
             var promptPath = Path.Combine(AppContext.BaseDirectory, "Prompts", "system-prompt.md");
             var systemPrompt = File.Exists(promptPath)

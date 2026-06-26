@@ -24,6 +24,6 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 COPY --from=build /app/publish .
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget -qO- http://localhost:8080/health || exit 1
+  CMD wget -qO- http://localhost:8080/alive || exit 1
 
 CMD ASPNETCORE_URLS="http://0.0.0.0:${PORT:-8080}" exec dotnet ResumeAnalyzer.Api.dll

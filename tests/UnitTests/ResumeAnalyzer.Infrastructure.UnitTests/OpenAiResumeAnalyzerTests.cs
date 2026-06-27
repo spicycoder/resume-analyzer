@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.AI;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using ResumeAnalyzer.Application;
 using ResumeAnalyzer.Application.Abstractions;
@@ -12,14 +12,14 @@ namespace ResumeAnalyzer.Infrastructure.UnitTests;
 
 public class OpenAiResumeAnalyzerTests
 {
-    private readonly Mock<IChatClient> _chatClientMock;
+    private readonly IChatClient _chatClient;
     private readonly SystemPrompt _systemPrompt = new("You are a resume analyzer.");
     private readonly OpenAiResumeAnalyzer _analyzer;
 
     public OpenAiResumeAnalyzerTests()
     {
-        _chatClientMock = new Mock<IChatClient>();
-        _analyzer = new OpenAiResumeAnalyzer(_chatClientMock.Object, _systemPrompt);
+        _chatClient = Substitute.For<IChatClient>();
+        _analyzer = new OpenAiResumeAnalyzer(_chatClient, _systemPrompt);
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class OpenAiResumeAnalyzerTests
     [Fact]
     public void Constructor_AcceptsNullSystemPrompt()
     {
-        var analyzer = new OpenAiResumeAnalyzer(_chatClientMock.Object, null!);
+        var analyzer = new OpenAiResumeAnalyzer(_chatClient, null!);
         analyzer.ShouldNotBeNull();
     }
 
@@ -89,20 +89,20 @@ public class OpenAiResumeAnalyzerTests
             [new Flag("Good", "Strong match")],
             []));
 
-        _chatClientMock
-            .Setup(c => c.GetResponseAsync(
-                It.IsAny<IEnumerable<ChatMessage>>(),
-                It.IsAny<ChatOptions?>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ChatResponse([new ChatMessage(ChatRole.Assistant, responseJson)]));
+        _chatClient
+            .GetResponseAsync(
+                Arg.Any<IEnumerable<ChatMessage>>(),
+                Arg.Any<ChatOptions?>(),
+                Arg.Any<CancellationToken>())
+            .Returns(new ChatResponse([new ChatMessage(ChatRole.Assistant, responseJson)]));
 
         var result = await _analyzer.AnalyzeAsync("resume text", "job description", CancellationToken.None);
 
         result.MatchPercentage.ShouldBe(85);
-        _chatClientMock.Verify(c => c.GetResponseAsync(
-            It.IsAny<IEnumerable<ChatMessage>>(),
-            It.IsAny<ChatOptions?>(),
-            It.IsAny<CancellationToken>()), Times.Once);
+        await _chatClient.Received(1).GetResponseAsync(
+            Arg.Any<IEnumerable<ChatMessage>>(),
+            Arg.Any<ChatOptions?>(),
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -113,12 +113,12 @@ public class OpenAiResumeAnalyzerTests
             [new Flag("Experience", "5 years exp")], [new Flag("Skill", "Proficient in React")]);
         var responseJson = "```json\n" + JsonSerializer.Serialize(analysisResult) + "\n```";
 
-        _chatClientMock
-            .Setup(c => c.GetResponseAsync(
-                It.IsAny<IEnumerable<ChatMessage>>(),
-                It.IsAny<ChatOptions?>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ChatResponse([new ChatMessage(ChatRole.Assistant, responseJson)]));
+        _chatClient
+            .GetResponseAsync(
+                Arg.Any<IEnumerable<ChatMessage>>(),
+                Arg.Any<ChatOptions?>(),
+                Arg.Any<CancellationToken>())
+            .Returns(new ChatResponse([new ChatMessage(ChatRole.Assistant, responseJson)]));
 
         var result = await _analyzer.AnalyzeAsync("resume", "jd", CancellationToken.None);
 
@@ -130,12 +130,12 @@ public class OpenAiResumeAnalyzerTests
     {
         var responseJson = "```\n{\"matchPercentage\":90,\"greenFlags\":[],\"redFlags\":[]}\n```";
 
-        _chatClientMock
-            .Setup(c => c.GetResponseAsync(
-                It.IsAny<IEnumerable<ChatMessage>>(),
-                It.IsAny<ChatOptions?>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ChatResponse([new ChatMessage(ChatRole.Assistant, responseJson)]));
+        _chatClient
+            .GetResponseAsync(
+                Arg.Any<IEnumerable<ChatMessage>>(),
+                Arg.Any<ChatOptions?>(),
+                Arg.Any<CancellationToken>())
+            .Returns(new ChatResponse([new ChatMessage(ChatRole.Assistant, responseJson)]));
 
         var result = await _analyzer.AnalyzeAsync("resume", "jd", CancellationToken.None);
 
@@ -145,12 +145,12 @@ public class OpenAiResumeAnalyzerTests
     [Fact]
     public async Task AnalyzeAsync_NullAiResponse_Throws()
     {
-        _chatClientMock
-            .Setup(c => c.GetResponseAsync(
-                It.IsAny<IEnumerable<ChatMessage>>(),
-                It.IsAny<ChatOptions?>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync((ChatResponse)null!);
+        _chatClient
+            .GetResponseAsync(
+                Arg.Any<IEnumerable<ChatMessage>>(),
+                Arg.Any<ChatOptions?>(),
+                Arg.Any<CancellationToken>())
+            .Returns((ChatResponse)null!);
 
         await Should.ThrowAsync<NullReferenceException>(() =>
             _analyzer.AnalyzeAsync("resume", "jd", CancellationToken.None));
@@ -162,14 +162,16 @@ public class OpenAiResumeAnalyzerTests
         var responseJson = JsonSerializer.Serialize(new AnalysisResult(50, [], []));
         List<ChatMessage>? capturedMessages = null;
 
-        _chatClientMock
-            .Setup(c => c.GetResponseAsync(
-                It.IsAny<IEnumerable<ChatMessage>>(),
-                It.IsAny<ChatOptions?>(),
-                It.IsAny<CancellationToken>()))
-            .Callback<IEnumerable<ChatMessage>, ChatOptions?, CancellationToken>((msgs, _, _) => 
-                capturedMessages = msgs.ToList())
-            .ReturnsAsync(new ChatResponse([new ChatMessage(ChatRole.Assistant, responseJson)]));
+        _chatClient
+            .GetResponseAsync(
+                Arg.Any<IEnumerable<ChatMessage>>(),
+                Arg.Any<ChatOptions?>(),
+                Arg.Any<CancellationToken>())
+            .Returns(ci =>
+            {
+                capturedMessages = ci.ArgAt<IEnumerable<ChatMessage>>(0).ToList();
+                return new ChatResponse([new ChatMessage(ChatRole.Assistant, responseJson)]);
+            });
 
         await _analyzer.AnalyzeAsync("my resume", "my jd", CancellationToken.None);
 

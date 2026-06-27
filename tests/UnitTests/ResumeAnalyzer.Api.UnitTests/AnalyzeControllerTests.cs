@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using ResumeAnalyzer.Api.Controllers;
 using ResumeAnalyzer.Application.UseCases.Queries;
@@ -12,13 +12,13 @@ namespace ResumeAnalyzer.Api.UnitTests;
 
 public class AnalyzeControllerTests
 {
-    private readonly Mock<IMessageBus> _busMock;
+    private readonly IMessageBus _bus;
     private readonly AnalyzeController _controller;
 
     public AnalyzeControllerTests()
     {
-        _busMock = new Mock<IMessageBus>();
-        _controller = new AnalyzeController(_busMock.Object);
+        _bus = Substitute.For<IMessageBus>();
+        _controller = new AnalyzeController(_bus);
     }
 
     [Fact]
@@ -39,8 +39,8 @@ public class AnalyzeControllerTests
     public async Task Analyze_ValidRequest_ReturnsOk()
     {
         var expectedResult = new AnalysisResult(75, new List<Flag>(), new List<Flag>());
-        _busMock.Setup(b => b.InvokeAsync<AnalysisResult>(It.IsAny<AnalyzeResumeQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedResult);
+        _bus.InvokeAsync<AnalysisResult>(Arg.Any<object>(), Arg.Any<CancellationToken>())
+            .Returns(expectedResult);
 
         var result = await _controller.Analyze(CreateFakeFile("jd.pdf"), CreateFakeFile("resume.pdf"), CancellationToken.None);
 
@@ -51,8 +51,8 @@ public class AnalyzeControllerTests
     [Fact]
     public async Task Analyze_ValidationError_ReturnsBadRequest()
     {
-        _busMock.Setup(b => b.InvokeAsync<AnalysisResult>(It.IsAny<AnalyzeResumeQuery>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new FluentValidation.ValidationException("Invalid"));
+        _bus.When(b => b.InvokeAsync<AnalysisResult>(Arg.Any<object>(), Arg.Any<CancellationToken>()))
+            .Do(_ => throw new FluentValidation.ValidationException("Invalid"));
 
         var result = await _controller.Analyze(CreateFakeFile("jd.pdf"), CreateFakeFile("resume.pdf"), CancellationToken.None);
 
@@ -62,8 +62,8 @@ public class AnalyzeControllerTests
     [Fact]
     public async Task Analyze_PdfEncrypted_ReturnsUnprocessableEntity()
     {
-        _busMock.Setup(b => b.InvokeAsync<AnalysisResult>(It.IsAny<AnalyzeResumeQuery>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new PdfEncryptedException("PDF is encrypted"));
+        _bus.When(b => b.InvokeAsync<AnalysisResult>(Arg.Any<object>(), Arg.Any<CancellationToken>()))
+            .Do(_ => throw new PdfEncryptedException("PDF is encrypted"));
 
         var result = await _controller.Analyze(CreateFakeFile("jd.pdf"), CreateFakeFile("resume.pdf"), CancellationToken.None);
 
@@ -73,8 +73,8 @@ public class AnalyzeControllerTests
     [Fact]
     public async Task Analyze_PdfParseError_ReturnsUnprocessableEntity()
     {
-        _busMock.Setup(b => b.InvokeAsync<AnalysisResult>(It.IsAny<AnalyzeResumeQuery>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new PdfParseException("Parse failed"));
+        _bus.When(b => b.InvokeAsync<AnalysisResult>(Arg.Any<object>(), Arg.Any<CancellationToken>()))
+            .Do(_ => throw new PdfParseException("Parse failed"));
 
         var result = await _controller.Analyze(CreateFakeFile("jd.pdf"), CreateFakeFile("resume.pdf"), CancellationToken.None);
 
@@ -85,8 +85,8 @@ public class AnalyzeControllerTests
     public async Task Analyze_CancellationRequested_Returns499()
     {
         using var cts = new CancellationTokenSource();
-        _busMock.Setup(b => b.InvokeAsync<AnalysisResult>(It.IsAny<AnalyzeResumeQuery>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new OperationCanceledException());
+        _bus.When(b => b.InvokeAsync<AnalysisResult>(Arg.Any<object>(), Arg.Any<CancellationToken>()))
+            .Do(_ => throw new OperationCanceledException());
 
         var result = await _controller.Analyze(CreateFakeFile("jd.pdf"), CreateFakeFile("resume.pdf"), cts.Token);
 
@@ -96,10 +96,10 @@ public class AnalyzeControllerTests
 
     private static IFormFile CreateFakeFile(string fileName)
     {
-        var mock = new Mock<IFormFile>();
-        mock.Setup(f => f.FileName).Returns(fileName);
-        mock.Setup(f => f.Length).Returns(100);
-        mock.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(new byte[100]));
-        return mock.Object;
+        var file = Substitute.For<IFormFile>();
+        file.FileName.Returns(fileName);
+        file.Length.Returns(100);
+        file.OpenReadStream().Returns(new MemoryStream(new byte[100]));
+        return file;
     }
 }

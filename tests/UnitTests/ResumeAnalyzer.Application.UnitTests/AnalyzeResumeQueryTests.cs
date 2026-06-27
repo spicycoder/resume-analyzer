@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using FluentValidation;
-using Moq;
 using Shouldly;
 using ResumeAnalyzer.Application.Abstractions;
 using ResumeAnalyzer.Application.UseCases.Queries;

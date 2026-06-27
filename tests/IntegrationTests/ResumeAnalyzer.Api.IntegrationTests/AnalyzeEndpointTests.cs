@@ -22,7 +22,7 @@ public class AnalyzeEndpointTests : IClassFixture<WebApplicationFactory<Program>
 
         using var content = new MultipartFormDataContent();
 
-        var response = await client.PostAsync("/api/analyze", content);
+        var response = await client.PostAsync("/api/analyze", content, TestContext.Current.CancellationToken);
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
@@ -35,7 +35,7 @@ public class AnalyzeEndpointTests : IClassFixture<WebApplicationFactory<Program>
         using var content = new StringContent("not a pdf");
         content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-        var response = await client.PostAsync("/api/analyze", content);
+        var response = await client.PostAsync("/api/analyze", content, TestContext.Current.CancellationToken);
 
         response.StatusCode.ShouldBe(HttpStatusCode.UnsupportedMediaType);
     }

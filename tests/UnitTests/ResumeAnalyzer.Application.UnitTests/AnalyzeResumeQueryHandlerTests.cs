@@ -1,4 +1,4 @@
-using Moq;
+using NSubstitute;
 using Shouldly;
 using ResumeAnalyzer.Application.Abstractions;
 using ResumeAnalyzer.Application.UseCases.Queries;
@@ -19,16 +19,14 @@ public class AnalyzeResumeQueryHandlerTests
             new List<Flag> { new("generic", "Strong .NET background") },
             new List<Flag>());
 
-        var mockExtractor = new Mock<IPdfTextExtractor>();
-        mockExtractor.SetupSequence(e => e.ExtractText(It.IsAny<Stream>()))
-            .Returns(jdText)
-            .Returns(resumeText);
+        var extractor = Substitute.For<IPdfTextExtractor>();
+        extractor.ExtractText(Arg.Any<Stream>()).Returns(jdText, resumeText);
 
-        var mockAnalyzer = new Mock<IResumeAnalyzer>();
-        mockAnalyzer.Setup(a => a.AnalyzeAsync(resumeText, jdText, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedResult);
+        var analyzer = Substitute.For<IResumeAnalyzer>();
+        analyzer.AnalyzeAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(expectedResult);
 
-        var handler = new AnalyzeResumeQueryHandler(mockExtractor.Object, mockAnalyzer.Object);
+        var handler = new AnalyzeResumeQueryHandler(extractor, analyzer);
 
         var query = new AnalyzeResumeQuery(
             new MemoryStream(), "jd.pdf", 100,
@@ -42,9 +40,9 @@ public class AnalyzeResumeQueryHandlerTests
     [Fact]
     public async Task Handle_QueryNull_ThrowsArgumentNullException()
     {
-        var mockExtractor = new Mock<IPdfTextExtractor>();
-        var mockAnalyzer = new Mock<IResumeAnalyzer>();
-        var handler = new AnalyzeResumeQueryHandler(mockExtractor.Object, mockAnalyzer.Object);
+        var extractor = Substitute.For<IPdfTextExtractor>();
+        var analyzer = Substitute.For<IResumeAnalyzer>();
+        var handler = new AnalyzeResumeQueryHandler(extractor, analyzer);
 
         await Should.ThrowAsync<ArgumentNullException>(() => handler.Handle(null!, CancellationToken.None));
     }
@@ -56,16 +54,14 @@ public class AnalyzeResumeQueryHandlerTests
         var resumeText = "Resume text";
         var expectedResult = new AnalysisResult(50, new List<Flag>(), new List<Flag>());
 
-        var mockExtractor = new Mock<IPdfTextExtractor>();
-        mockExtractor.SetupSequence(e => e.ExtractText(It.IsAny<Stream>()))
-            .Returns(jdText)
-            .Returns(resumeText);
+        var extractor = Substitute.For<IPdfTextExtractor>();
+        extractor.ExtractText(Arg.Any<Stream>()).Returns(jdText, resumeText);
 
-        var mockAnalyzer = new Mock<IResumeAnalyzer>();
-        mockAnalyzer.Setup(a => a.AnalyzeAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedResult);
+        var analyzer = Substitute.For<IResumeAnalyzer>();
+        analyzer.AnalyzeAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(expectedResult);
 
-        var handler = new AnalyzeResumeQueryHandler(mockExtractor.Object, mockAnalyzer.Object);
+        var handler = new AnalyzeResumeQueryHandler(extractor, analyzer);
 
         var query = new AnalyzeResumeQuery(
             new MemoryStream(), "jd.pdf", 100,
@@ -73,6 +69,6 @@ public class AnalyzeResumeQueryHandlerTests
 
         await handler.Handle(query, CancellationToken.None);
 
-        mockExtractor.Verify(e => e.ExtractText(It.IsAny<Stream>()), Times.Exactly(2));
+        extractor.Received(2).ExtractText(Arg.Any<Stream>());
     }
 }

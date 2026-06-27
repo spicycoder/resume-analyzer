@@ -1,4 +1,4 @@
-using ResumeAnalyzer.Application.Abstractions;
+using ResumeAnalyzer.Domain.Abstractions;
 using ResumeAnalyzer.Domain.Models;
 
 namespace ResumeAnalyzer.Application.UseCases.Queries;

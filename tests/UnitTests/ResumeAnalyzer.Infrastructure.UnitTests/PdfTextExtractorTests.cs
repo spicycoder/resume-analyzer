@@ -1,6 +1,6 @@
 using System.Text;
 using Shouldly;
-using ResumeAnalyzer.Application.UseCases.Queries;
+using ResumeAnalyzer.Domain.Exceptions;
 using ResumeAnalyzer.Infrastructure.Pdf;
 using Xunit;
 

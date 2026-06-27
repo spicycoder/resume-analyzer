@@ -25,7 +25,8 @@ if (allowedOrigins is { Length: > 0 })
 }
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -33,10 +34,11 @@ app.MapDefaultEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.UseSwaggerUI(
-        Theme.Futuristic,
-        options => options.SwaggerEndpoint("/openapi/v1.json", "Resume Analyzer API v1"));
+    app.UseSwagger();
+    app.UseSwaggerUI(Theme.Futuristic, options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Resume Analyzer API v1");
+    });
 }
 else
 {

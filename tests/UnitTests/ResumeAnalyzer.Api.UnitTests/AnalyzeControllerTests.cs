@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using Shouldly;
 using ResumeAnalyzer.Api.Controllers;
-using ResumeAnalyzer.Application.UseCases.Queries;
+using ResumeAnalyzer.Domain.Exceptions;
 using ResumeAnalyzer.Domain.Models;
 using Wolverine;
 using Xunit;
@@ -92,6 +92,42 @@ public class AnalyzeControllerTests
 
         result.ShouldBeOfType<StatusCodeResult>();
         ((StatusCodeResult)result).StatusCode.ShouldBe(499);
+    }
+
+    [Fact]
+    public async Task Analyze_RateLimitExceeded_Returns429()
+    {
+        _bus.When(b => b.InvokeAsync<AnalysisResult>(Arg.Any<object>(), Arg.Any<CancellationToken>()))
+            .Do(_ => throw new RateLimitExceededException("rate limited"));
+
+        var result = await _controller.Analyze(CreateFakeFile("jd.pdf"), CreateFakeFile("resume.pdf"), CancellationToken.None);
+
+        var statusCodeResult = result.ShouldBeOfType<ObjectResult>();
+        statusCodeResult.StatusCode.ShouldBe(429);
+    }
+
+    [Fact]
+    public async Task Analyze_TimeoutException_Returns504()
+    {
+        _bus.When(b => b.InvokeAsync<AnalysisResult>(Arg.Any<object>(), Arg.Any<CancellationToken>()))
+            .Do(_ => throw new TimeoutException("timed out"));
+
+        var result = await _controller.Analyze(CreateFakeFile("jd.pdf"), CreateFakeFile("resume.pdf"), CancellationToken.None);
+
+        var statusCodeResult = result.ShouldBeOfType<ObjectResult>();
+        statusCodeResult.StatusCode.ShouldBe(504);
+    }
+
+    [Fact]
+    public async Task Analyze_GenericException_Returns500()
+    {
+        _bus.When(b => b.InvokeAsync<AnalysisResult>(Arg.Any<object>(), Arg.Any<CancellationToken>()))
+            .Do(_ => throw new InvalidOperationException("unexpected"));
+
+        var result = await _controller.Analyze(CreateFakeFile("jd.pdf"), CreateFakeFile("resume.pdf"), CancellationToken.None);
+
+        var statusCodeResult = result.ShouldBeOfType<ObjectResult>();
+        statusCodeResult.StatusCode.ShouldBe(500);
     }
 
     private static IFormFile CreateFakeFile(string fileName)

@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using OpenAI;
 
-using ResumeAnalyzer.Application.Abstractions;
+using ResumeAnalyzer.Domain.Abstractions;
 using ResumeAnalyzer.Infrastructure.Ai;
 using ResumeAnalyzer.Infrastructure.Pdf;
 

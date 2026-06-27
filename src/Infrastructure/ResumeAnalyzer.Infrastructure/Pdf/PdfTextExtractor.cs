@@ -1,7 +1,7 @@
 using System.Text;
 
-using ResumeAnalyzer.Application.Abstractions;
-using ResumeAnalyzer.Application.UseCases.Queries;
+using ResumeAnalyzer.Domain.Abstractions;
+using ResumeAnalyzer.Domain.Exceptions;
 
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Core;

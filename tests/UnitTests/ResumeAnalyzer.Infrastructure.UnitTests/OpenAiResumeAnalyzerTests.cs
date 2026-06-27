@@ -1,9 +1,10 @@
+using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.AI;
 using NSubstitute;
 using Shouldly;
-using ResumeAnalyzer.Application;
-using ResumeAnalyzer.Application.Abstractions;
+using ResumeAnalyzer.Domain.Abstractions;
+using ResumeAnalyzer.Domain.Exceptions;
 using ResumeAnalyzer.Domain.Models;
 using ResumeAnalyzer.Infrastructure.Ai;
 using Xunit;
@@ -182,5 +183,42 @@ public class OpenAiResumeAnalyzerTests
         capturedMessages[1].Role.ShouldBe(ChatRole.User);
         capturedMessages[1].Text.ShouldContain("my resume");
         capturedMessages[1].Text.ShouldContain("my jd");
+    }
+
+    [Fact]
+    public async Task AnalyzeAsync_OperationCancelled_ThrowsTimeoutException()
+    {
+        _chatClient
+            .GetResponseAsync(Arg.Any<IEnumerable<ChatMessage>>(), Arg.Any<ChatOptions?>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromException<ChatResponse>(new OperationCanceledException()));
+
+        var ex = await Should.ThrowAsync<TimeoutException>(() =>
+            _analyzer.AnalyzeAsync("resume", "jd", CancellationToken.None));
+
+        ex.Message.ShouldContain("90 seconds");
+    }
+
+    [Fact]
+    public async Task AnalyzeAsync_HttpRequest429_ThrowsRateLimitExceededException()
+    {
+        _chatClient
+            .GetResponseAsync(Arg.Any<IEnumerable<ChatMessage>>(), Arg.Any<ChatOptions?>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromException<ChatResponse>(new HttpRequestException(null, null, HttpStatusCode.TooManyRequests)));
+
+        var ex = await Should.ThrowAsync<RateLimitExceededException>(() =>
+            _analyzer.AnalyzeAsync("resume", "jd", CancellationToken.None));
+
+        ex.Message.ShouldContain("rate limit");
+    }
+
+    [Fact]
+    public async Task AnalyzeAsync_InvalidJsonResponse_ThrowsInvalidOperationException()
+    {
+        _chatClient
+            .GetResponseAsync(Arg.Any<IEnumerable<ChatMessage>>(), Arg.Any<ChatOptions?>(), Arg.Any<CancellationToken>())
+            .Returns(new ChatResponse([new ChatMessage(ChatRole.Assistant, "null")]));
+
+        await Should.ThrowAsync<InvalidOperationException>(() =>
+            _analyzer.AnalyzeAsync("resume", "jd", CancellationToken.None));
     }
 }

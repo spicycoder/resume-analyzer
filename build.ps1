@@ -3,6 +3,12 @@ dotnet tool restore
 dotnet restore ./ResumeAnalyzer.slnx
 dotnet build --no-restore -c Release ./ResumeAnalyzer.slnx
 
+# Frontend build
+Push-Location web
+pnpm install
+pnpm run build
+Pop-Location
+
 if (Test-Path ./.coverage) { Remove-Item ./.coverage -Recurse -Force }
 New-Item -ItemType Directory -Path ./.coverage | Out-Null
 

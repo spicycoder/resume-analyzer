@@ -1,7 +1,6 @@
 using System.Security.Cryptography;
 using FluentValidation;
 using Shouldly;
-using ResumeAnalyzer.Application.Abstractions;
 using ResumeAnalyzer.Application.UseCases.Queries;
 using ResumeAnalyzer.Domain.Models;
 using Xunit;

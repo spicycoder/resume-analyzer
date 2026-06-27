@@ -1,4 +1,4 @@
-namespace ResumeAnalyzer.Application.Abstractions;
+namespace ResumeAnalyzer.Domain.Abstractions;
 
 public interface IPdfTextExtractor
 {

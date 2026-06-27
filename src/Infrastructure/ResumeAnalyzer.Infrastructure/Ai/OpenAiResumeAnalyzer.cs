@@ -4,9 +4,8 @@ using System.Text.Json;
 
 using Microsoft.Extensions.AI;
 
-using ResumeAnalyzer.Application;
-using ResumeAnalyzer.Application.Abstractions;
-using ResumeAnalyzer.Application.UseCases.Queries;
+using ResumeAnalyzer.Domain.Abstractions;
+using ResumeAnalyzer.Domain.Exceptions;
 using ResumeAnalyzer.Domain.Models;
 
 namespace ResumeAnalyzer.Infrastructure.Ai;

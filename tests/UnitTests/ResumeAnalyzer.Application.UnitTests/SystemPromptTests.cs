@@ -1,5 +1,5 @@
 using Shouldly;
-using ResumeAnalyzer.Application;
+using ResumeAnalyzer.Domain.Models;
 using Xunit;
 
 namespace ResumeAnalyzer.Application.UnitTests;

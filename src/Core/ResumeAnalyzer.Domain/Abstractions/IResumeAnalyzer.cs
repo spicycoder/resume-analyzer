@@ -1,6 +1,6 @@
 using ResumeAnalyzer.Domain.Models;
 
-namespace ResumeAnalyzer.Application.Abstractions;
+namespace ResumeAnalyzer.Domain.Abstractions;
 
 public interface IResumeAnalyzer
 {

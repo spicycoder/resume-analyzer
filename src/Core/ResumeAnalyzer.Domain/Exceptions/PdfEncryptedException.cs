@@ -1,4 +1,4 @@
-namespace ResumeAnalyzer.Application.UseCases.Queries;
+namespace ResumeAnalyzer.Domain.Exceptions;
 
 public class PdfEncryptedException : PdfParseException
 {

@@ -1,4 +1,4 @@
-namespace ResumeAnalyzer.Application;
+namespace ResumeAnalyzer.Domain.Models;
 
 public record SystemPrompt(string Content)
 {

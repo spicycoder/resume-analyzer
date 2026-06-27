@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wolverine;
 using Wolverine.FluentValidation;
+using ResumeAnalyzer.Domain.Models;
 
 namespace ResumeAnalyzer.Application;
 

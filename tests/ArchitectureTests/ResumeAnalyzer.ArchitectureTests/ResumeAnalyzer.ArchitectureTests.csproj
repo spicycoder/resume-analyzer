@@ -1,5 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Auto-detected as test project by Directory.Build.props (ends with 'Tests') -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TngTech.ArchUnitNET.xUnitV3" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\ResumeAnalyzer.Api\ResumeAnalyzer.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Core\ResumeAnalyzer.Application\ResumeAnalyzer.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\Core\ResumeAnalyzer.Domain\ResumeAnalyzer.Domain.csproj" />
+    <ProjectReference Include="..\..\..\src\Infrastructure\ResumeAnalyzer.Infrastructure\ResumeAnalyzer.Infrastructure.csproj" />
   </ItemGroup>
+
 </Project>

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using ResumeAnalyzer.Application.UseCases.Queries;
+using ResumeAnalyzer.Domain.Exceptions;
 using ResumeAnalyzer.Domain.Models;
 
 using Wolverine;

@@ -1,6 +1,6 @@
 using NSubstitute;
 using Shouldly;
-using ResumeAnalyzer.Application.Abstractions;
+using ResumeAnalyzer.Domain.Abstractions;
 using ResumeAnalyzer.Application.UseCases.Queries;
 using ResumeAnalyzer.Domain.Models;
 using Xunit;

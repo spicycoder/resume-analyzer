@@ -19,8 +19,8 @@ jobs:
       - name: Install Aspire workload
         run: dotnet workload install aspire
 
-      - name: Restore tools
-        run: dotnet tool restore
+      - name: Install Stryker
+        run: dotnet tool install dotnet-stryker --tool-path .tools
 
       - name: Restore
         run: dotnet restore ./ResumeAnalyzer.slnx
@@ -29,7 +29,7 @@ jobs:
         run: dotnet build --no-restore -c Release ./ResumeAnalyzer.slnx
 
       - name: Run Stryker
-        run: dotnet stryker --solution ResumeAnalyzer.slnx --output stryker-output
+        run: .tools/dotnet-stryker --solution ResumeAnalyzer.slnx --output stryker-output
 
       - name: Push mutation report to dashboard
         env:

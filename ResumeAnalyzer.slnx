@@ -12,9 +12,7 @@
     <Project Path="src/Infrastructure/ResumeAnalyzer.Infrastructure/ResumeAnalyzer.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/tests/" />
-  <Folder Name="/tests/ArchitectureTests/">
-    <Project Path="tests/ArchitectureTests/ResumeAnalyzer.ArchitectureTests/ResumeAnalyzer.ArchitectureTests.csproj" />
-  </Folder>
+
   <Folder Name="/tests/UnitTests/">
     <Project Path="tests/UnitTests/ResumeAnalyzer.Api.UnitTests/ResumeAnalyzer.Api.UnitTests.csproj" />
     <Project Path="tests/UnitTests/ResumeAnalyzer.Application.UnitTests/ResumeAnalyzer.Application.UnitTests.csproj" />

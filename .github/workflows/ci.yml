@@ -77,6 +77,7 @@ jobs:
           git add .
           git -c user.name="CI" -c user.email="ci@spicycoder.dev" \
             commit -m "Update resume-analyzer coverage [skip ci]" --allow-empty
+          git remote set-url origin https://spicycoder:${GH_TOKEN}@github.com/spicycoder/dashboard.git
           git push
 
   publish:

@@ -1,8 +1,10 @@
 using System.ClientModel;
+using System.Globalization;
 using System.Net;
 using System.Text.Json;
 
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Configuration;
 
 using ResumeAnalyzer.Domain.Abstractions;
 using ResumeAnalyzer.Domain.Exceptions;
@@ -13,12 +15,16 @@ namespace ResumeAnalyzer.Infrastructure.Ai;
 public class OpenAiResumeAnalyzer(
     IChatClient chatClient,
     SystemPrompt systemPrompt,
-    int timeoutSeconds = 150) : IResumeAnalyzer
+    IConfiguration configuration) : IResumeAnalyzer
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
+
+    private readonly int _timeoutSeconds = int.Parse(
+        configuration.GetSection("Ai")["TimeoutSeconds"] ?? "150",
+        CultureInfo.InvariantCulture);
 
     public async Task<AnalysisResult> AnalyzeAsync(string resumeText, string jdText, CancellationToken cancellationToken)
     {
@@ -34,7 +40,7 @@ public class OpenAiResumeAnalyzer(
             """;
 
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        cts.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
+        cts.CancelAfter(TimeSpan.FromSeconds(_timeoutSeconds));
 
         ChatResponse response;
         try
@@ -48,7 +54,7 @@ public class OpenAiResumeAnalyzer(
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
-            throw new TimeoutException($"AI service did not respond within {timeoutSeconds} seconds.");
+            throw new TimeoutException($"AI service did not respond within {_timeoutSeconds} seconds.");
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.TooManyRequests)
         {

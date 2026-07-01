@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Configuration;
 using NSubstitute;
 using Shouldly;
 using ResumeAnalyzer.Domain.Abstractions;
@@ -17,23 +18,29 @@ public class OpenAiResumeAnalyzerTests
     private readonly SystemPrompt _systemPrompt = new("You are a resume analyzer.");
     private readonly OpenAiResumeAnalyzer _analyzer;
 
+    private static IConfiguration MakeConfig(string timeout = "150")
+    {
+        var dict = new Dictionary<string, string?> { ["Ai:TimeoutSeconds"] = timeout };
+        return new ConfigurationBuilder().AddInMemoryCollection(dict).Build();
+    }
+
     public OpenAiResumeAnalyzerTests()
     {
         _chatClient = Substitute.For<IChatClient>();
-        _analyzer = new OpenAiResumeAnalyzer(_chatClient, _systemPrompt);
+        _analyzer = new OpenAiResumeAnalyzer(_chatClient, _systemPrompt, MakeConfig());
     }
 
     [Fact]
     public void Constructor_AcceptsNullChatClient()
     {
-        var analyzer = new OpenAiResumeAnalyzer(null!, _systemPrompt);
+        var analyzer = new OpenAiResumeAnalyzer(null!, _systemPrompt, MakeConfig());
         analyzer.ShouldNotBeNull();
     }
 
     [Fact]
     public void Constructor_AcceptsNullSystemPrompt()
     {
-        var analyzer = new OpenAiResumeAnalyzer(_chatClient, null!);
+        var analyzer = new OpenAiResumeAnalyzer(_chatClient, null!, MakeConfig());
         analyzer.ShouldNotBeNull();
     }
 

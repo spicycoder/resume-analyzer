@@ -50,15 +50,11 @@ export default function HomePage() {
     form.append("jd", jd.file!)
     form.append("resume", resume.file!)
 
-    const ac = new AbortController()
-    const timeout = setTimeout(() => ac.abort(), 120_000)
-
     try {
       const apiUrl = import.meta.env.VITE_API_URL || ""
       const res = await fetch(`${apiUrl}/api/analyze`, {
         method: "POST",
         body: form,
-        signal: ac.signal,
       })
 
       if (!res.ok) {
@@ -66,16 +62,10 @@ export default function HomePage() {
         throw new Error(body || `Request failed (${res.status})`)
       }
 
-      clearTimeout(timeout)
       const data: AnalysisResult = await res.json()
       setResult(data)
     } catch (err) {
-      clearTimeout(timeout)
-      if (err instanceof DOMException && err.name === "AbortError") {
-        setError("Request timed out after 120 seconds. The AI service may be slow.")
-      } else {
-        setError(err instanceof Error ? err.message : "An unexpected error occurred")
-      }
+      setError(err instanceof Error ? err.message : "An unexpected error occurred")
     } finally {
       setLoading(false)
     }

@@ -39,6 +39,10 @@ jobs:
         with:
           version: latest
 
+      - name: Configure pnpm
+        run: pnpm config set minimumReleaseAge 0 --location=project
+        working-directory: web
+
       - name: Install frontend dependencies
         run: pnpm install
         working-directory: web

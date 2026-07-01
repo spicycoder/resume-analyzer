@@ -195,7 +195,7 @@ public class OpenAiResumeAnalyzerTests
         var ex = await Should.ThrowAsync<TimeoutException>(() =>
             _analyzer.AnalyzeAsync("resume", "jd", CancellationToken.None));
 
-        ex.Message.ShouldContain("90 seconds");
+        ex.Message.ShouldContain("150 seconds");
     }
 
     [Fact]

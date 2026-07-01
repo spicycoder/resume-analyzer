@@ -44,7 +44,7 @@ jobs:
         working-directory: web
 
       - name: Build frontend
-        run: pnpm run build
+        run: pnpm run build --config.minimumReleaseAge=0
         working-directory: web
 
       - name: Test with coverage

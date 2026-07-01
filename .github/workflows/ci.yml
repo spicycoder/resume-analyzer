@@ -8,6 +8,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +61,16 @@ jobs:
             --settings ./coverage.runsettings \
             --output ./.coverage/coverage.cobertura.xml \
             --output-format cobertura \
-            "dotnet test --no-build -c Release ./ResumeAnalyzer.slnx"
+            "dotnet test --no-build -c Release ./ResumeAnalyzer.slnx --logger trx --results-directory ./.coverage/trx"
+
+      - name: Test report
+        uses: dorny/test-reporter@v2
+        if: success() || failure()
+        with:
+          name: Test results
+          path: ./.coverage/trx/*.trx
+          reporter: dotnet-trx
+          fail-on-error: false
 
       - name: Generate coverage report
         if: github.ref == 'refs/heads/main'

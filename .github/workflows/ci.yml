@@ -40,11 +40,11 @@ jobs:
           version: latest
 
       - name: Install frontend dependencies
-        run: pnpm install --config.minimumReleaseAge=0
+        run: pnpm install
         working-directory: web
 
       - name: Build frontend
-        run: pnpm run build --config.minimumReleaseAge=0
+        run: pnpm run build
         working-directory: web
 
       - name: Test with coverage

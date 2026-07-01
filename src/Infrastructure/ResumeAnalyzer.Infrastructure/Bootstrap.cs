@@ -1,4 +1,5 @@
 using System.ClientModel;
+using System.Globalization;
 
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
@@ -23,7 +24,7 @@ public static class InfrastructureBootstrap
         services.AddScoped<IResumeAnalyzer>(sp =>
         {
             var aiOptions = configuration.GetSection("Ai");
-            var timeoutSeconds = int.Parse(aiOptions["TimeoutSeconds"] ?? "150");
+            var timeoutSeconds = int.Parse(aiOptions["TimeoutSeconds"] ?? "150", CultureInfo.InvariantCulture);
             return ActivatorUtilities.CreateInstance<OpenAiResumeAnalyzer>(sp, timeoutSeconds);
         });
 

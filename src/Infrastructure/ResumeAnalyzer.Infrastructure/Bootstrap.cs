@@ -1,4 +1,5 @@
 using System.ClientModel;
+using System.Globalization;
 
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
@@ -27,7 +28,7 @@ public static class InfrastructureBootstrap
         var apiKey = aiOptions["ApiKey"] ?? "none";
         var endpoint = aiOptions["Endpoint"];
         var model = aiOptions["Model"] ?? "gpt-4o";
-        var timeout = TimeSpan.FromSeconds(int.Parse(aiOptions["TimeoutSeconds"] ?? "150"));
+        var timeout = TimeSpan.FromSeconds(int.Parse(aiOptions["TimeoutSeconds"] ?? "150", CultureInfo.InvariantCulture));
 
         var clientOptions = new OpenAIClientOptions
         {

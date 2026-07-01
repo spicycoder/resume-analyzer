@@ -12,7 +12,8 @@ namespace ResumeAnalyzer.Infrastructure.Ai;
 
 public class OpenAiResumeAnalyzer(
     IChatClient chatClient,
-    SystemPrompt systemPrompt) : IResumeAnalyzer
+    SystemPrompt systemPrompt,
+    int timeoutSeconds = 150) : IResumeAnalyzer
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -33,7 +34,7 @@ public class OpenAiResumeAnalyzer(
             """;
 
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        cts.CancelAfter(TimeSpan.FromSeconds(90));
+        cts.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
 
         ChatResponse response;
         try
@@ -47,7 +48,7 @@ public class OpenAiResumeAnalyzer(
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
-            throw new TimeoutException("AI service did not respond within 90 seconds.");
+            throw new TimeoutException($"AI service did not respond within {timeoutSeconds} seconds.");
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.TooManyRequests)
         {

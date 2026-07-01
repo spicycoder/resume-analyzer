@@ -20,7 +20,12 @@ public static class InfrastructureBootstrap
         ArgumentNullException.ThrowIfNull(configuration);
 
         services.AddScoped<IPdfTextExtractor, PdfTextExtractor>();
-        services.AddScoped<IResumeAnalyzer, OpenAiResumeAnalyzer>();
+        services.AddScoped<IResumeAnalyzer>(sp =>
+        {
+            var aiOptions = configuration.GetSection("Ai");
+            var timeoutSeconds = int.Parse(aiOptions["TimeoutSeconds"] ?? "150");
+            return ActivatorUtilities.CreateInstance<OpenAiResumeAnalyzer>(sp, timeoutSeconds);
+        });
 
         // AI Provider Configuration (OpenAI compatible)
         var aiOptions = configuration.GetSection("Ai");

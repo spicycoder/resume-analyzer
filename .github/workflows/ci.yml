@@ -8,6 +8,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -58,6 +62,15 @@ jobs:
             --output ./.coverage/coverage.cobertura.xml \
             --output-format cobertura \
             "dotnet test --no-build -c Release ./ResumeAnalyzer.slnx"
+
+      - name: Coverage annotations
+        uses: dorny/test-reporter@v2
+        if: success() || failure()
+        with:
+          name: Coverage report
+          path: ./.coverage/coverage.cobertura.xml
+          reporter: cobertura
+          fail-on-error: false
 
       - name: Generate coverage report
         if: github.ref == 'refs/heads/main'

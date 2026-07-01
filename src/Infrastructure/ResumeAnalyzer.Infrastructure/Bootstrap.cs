@@ -27,10 +27,19 @@ public static class InfrastructureBootstrap
         var apiKey = aiOptions["ApiKey"] ?? "none";
         var endpoint = aiOptions["Endpoint"];
         var model = aiOptions["Model"] ?? "gpt-4o";
+        var timeout = TimeSpan.FromSeconds(int.Parse(aiOptions["TimeoutSeconds"] ?? "150"));
 
-        var client = endpoint != null
-            ? new OpenAIClient(new ApiKeyCredential(apiKey), new OpenAIClientOptions { Endpoint = new Uri(endpoint) })
-            : new OpenAIClient(new ApiKeyCredential(apiKey));
+        var clientOptions = new OpenAIClientOptions
+        {
+            NetworkTimeout = timeout
+        };
+
+        if (endpoint != null)
+        {
+            clientOptions.Endpoint = new Uri(endpoint);
+        }
+
+        var client = new OpenAIClient(new ApiKeyCredential(apiKey), clientOptions);
 
         services.AddChatClient(client.GetChatClient(model).AsIChatClient());
 

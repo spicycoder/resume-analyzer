@@ -20,6 +20,15 @@ function scoreColor(pct: number): string {
   return "#ef4444"
 }
 
+function groupByCategory(flags: Flag[]): Record<string, string[]> {
+  const map: Record<string, string[]> = {}
+  for (const f of flags) {
+    if (!map[f.category]) map[f.category] = []
+    map[f.category].push(f.description)
+  }
+  return map
+}
+
 function toMarkdown(result: AnalysisResult): string {
   const lines: string[] = []
   lines.push("# Resume Analysis Report")
@@ -29,18 +38,28 @@ function toMarkdown(result: AnalysisResult): string {
 
   if (result.greenFlags.length > 0) {
     lines.push("## Green Flags")
-    for (const f of result.greenFlags) {
-      lines.push(`- [${f.category}] ${f.description}`)
-    }
     lines.push("")
+    const grouped = groupByCategory(result.greenFlags)
+    for (const [category, descriptions] of Object.entries(grouped)) {
+      lines.push(`### ${category}`)
+      for (const desc of descriptions) {
+        lines.push(`- ${desc}`)
+      }
+      lines.push("")
+    }
   }
 
   if (result.redFlags.length > 0) {
     lines.push("## Red Flags")
-    for (const f of result.redFlags) {
-      lines.push(`- [${f.category}] ${f.description}`)
-    }
     lines.push("")
+    const grouped = groupByCategory(result.redFlags)
+    for (const [category, descriptions] of Object.entries(grouped)) {
+      lines.push(`### ${category}`)
+      for (const desc of descriptions) {
+        lines.push(`- ${desc}`)
+      }
+      lines.push("")
+    }
   }
 
   return lines.join("\n")
@@ -91,28 +110,26 @@ export default function ResultContent({
         {result.greenFlags.length > 0 ? (
           <div>
             <h2 className="text-green-400 text-base font-semibold mb-2">Green Flags</h2>
-            <div className="space-y-3">
+            <ul className="space-y-3 list-disc list-inside">
               {result.greenFlags.map((f, i) => (
-                <div key={i}>
-                  <h2 className="text-green-400/80 text-sm font-medium">{f.category}</h2>
-                  <p className="text-white/70 text-sm leading-relaxed">{f.description}</p>
-                </div>
+                <li key={i} className="text-white/70 text-sm leading-relaxed">
+                  <span className="font-semibold text-green-400/80">{f.category}</span>: {f.description}
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         ) : null}
 
         {result.redFlags.length > 0 ? (
           <div>
             <h2 className="text-red-400 text-base font-semibold mb-2">Red Flags</h2>
-            <div className="space-y-3">
+            <ul className="space-y-3 list-disc list-inside">
               {result.redFlags.map((f, i) => (
-                <div key={i}>
-                  <h2 className="text-red-400/80 text-sm font-medium">{f.category}</h2>
-                  <p className="text-white/70 text-sm leading-relaxed">{f.description}</p>
-                </div>
+                <li key={i} className="text-white/70 text-sm leading-relaxed">
+                  <span className="font-semibold text-red-400/80">{f.category}</span>: {f.description}
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         ) : null}
       </div>

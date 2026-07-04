@@ -25,7 +25,8 @@ public static class InfrastructureBootstrap
 
         // AI Provider Configuration (OpenAI compatible)
         var aiOptions = configuration.GetSection("Ai");
-        var apiKey = aiOptions["ApiKey"] ?? "none";
+        var apiKey = aiOptions["ApiKey"];
+        if (string.IsNullOrWhiteSpace(apiKey)) apiKey = "none";
         var endpoint = aiOptions["Endpoint"];
         var model = aiOptions["Model"] ?? "gpt-4o";
         var timeout = TimeSpan.FromSeconds(int.Parse(aiOptions["TimeoutSeconds"] ?? "150", CultureInfo.InvariantCulture));

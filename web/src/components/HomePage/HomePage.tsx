@@ -298,7 +298,7 @@ export default function HomePage() {
             />.
           </p>
           <p className="text-white/30 text-[10px] sm:text-xs leading-relaxed max-w-[260px] sm:max-w-md">
-            Demo uses a free AI tier — 40 requests/min. If you hit the limit, wait and retry.
+            Demo uses a free AI tier. If you hit the limit, wait and retry.
           </p>
         </footer>
       </div>

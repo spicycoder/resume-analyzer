@@ -110,26 +110,36 @@ export default function ResultContent({
         {result.greenFlags.length > 0 ? (
           <div>
             <h2 className="text-green-400 text-base font-semibold mb-2">Green Flags</h2>
-            <ul className="space-y-3 list-disc list-inside">
-              {result.greenFlags.map((f, i) => (
-                <li key={i} className="text-white/70 text-sm leading-relaxed">
-                  <span className="font-semibold text-green-400/80">{f.category}</span>: {f.description}
-                </li>
+            <div className="space-y-4">
+              {Object.entries(groupByCategory(result.greenFlags)).map(([category, descriptions]) => (
+                <div key={category}>
+                  <h3 className="text-green-400/80 text-sm font-semibold mb-1">{category}</h3>
+                  <ul className="list-disc list-inside space-y-1">
+                    {descriptions.map((desc, i) => (
+                      <li key={i} className="text-white/70 text-sm leading-relaxed">{desc}</li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         ) : null}
 
         {result.redFlags.length > 0 ? (
           <div>
             <h2 className="text-red-400 text-base font-semibold mb-2">Red Flags</h2>
-            <ul className="space-y-3 list-disc list-inside">
-              {result.redFlags.map((f, i) => (
-                <li key={i} className="text-white/70 text-sm leading-relaxed">
-                  <span className="font-semibold text-red-400/80">{f.category}</span>: {f.description}
-                </li>
+            <div className="space-y-4">
+              {Object.entries(groupByCategory(result.redFlags)).map(([category, descriptions]) => (
+                <div key={category}>
+                  <h3 className="text-red-400/80 text-sm font-semibold mb-1">{category}</h3>
+                  <ul className="list-disc list-inside space-y-1">
+                    {descriptions.map((desc, i) => (
+                      <li key={i} className="text-white/70 text-sm leading-relaxed">{desc}</li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         ) : null}
       </div>

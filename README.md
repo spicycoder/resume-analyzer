@@ -4,9 +4,9 @@ AI-driven resume analysis against job descriptions.
 
 > The public instance is for demo purposes only. Self-host with your own OpenAI-compatible API key for production use.
 
-| Build |
-| --- |
-| [![CI](https://github.com/spicycoder/resume-analyzer/actions/workflows/ci.yml/badge.svg)](https://github.com/spicycoder/resume-analyzer/actions/workflows/ci.yml) |
+| Build | Alive |
+| --- | --- |
+| [![CI](https://github.com/spicycoder/resume-analyzer/actions/workflows/ci.yml/badge.svg)](https://github.com/spicycoder/resume-analyzer/actions/workflows/ci.yml) | [![API Status](https://img.shields.io/github/actions/workflow/status/spicycoder/resume-analyzer/keepalive.yml?label=api%20status)](https://github.com/spicycoder/resume-analyzer/actions/workflows/keepalive.yml) |
 
 ---
 

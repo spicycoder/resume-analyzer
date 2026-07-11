@@ -11,6 +11,7 @@ const apiHttp = process.env['services__resumeanalyzer-api__http__0']
 const apiTarget = apiHttps || apiHttp || 'https://localhost:5222'
 
 export default defineConfig({
+  base: '/resume-analyzer/',
   plugins: [
     react(),
     tailwindcss(),

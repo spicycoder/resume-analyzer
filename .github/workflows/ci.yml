@@ -159,6 +159,7 @@ jobs:
         working-directory: web
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_CLARITY_ID: ${{ vars.VITE_CLARITY_ID }}
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4

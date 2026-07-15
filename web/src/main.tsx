@@ -1,10 +1,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { ClarityScript } from '@/components/ClarityScript'
 import './index.css'
 import App from './App'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <ClarityScript />
     <App />
   </StrictMode>,
 )
